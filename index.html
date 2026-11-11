@@ -138,6 +138,88 @@
             color: #FF5C8A;
         }
 
+        /* 租金三選一 */
+        .rent-choice-group {
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            vertical-align: middle;
+            margin: 0 6px;
+        }
+        .rent-btn {
+            background: #FFF;
+            border: 2px dashed #FF8FAB;
+            color: #FF5C8A;
+            padding: 5px 18px;
+            font-size: 17px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .rent-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+        .rent-btn.active {
+            background: #FFF0F3;
+            border: 2px solid #FF5C8A;
+            box-shadow: 0 3px 10px rgba(255, 117, 143, 0.25);
+        }
+
+        .rent-feedback {
+            margin-top: 12px;
+            min-height: 10px;
+            text-align: center;
+            font-weight: bold;
+            color: #FF5C8A;
+        }
+        .rent-feedback .fb-confetti {
+            font-size: 40px;
+            letter-spacing: 6px;
+            display: inline-block;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .rent-feedback .fb-qmark {
+            display: inline-block;
+            font-size: 72px;
+            line-height: 1;
+            color: #FF9F43;
+            animation: popIn 0.4s ease;
+        }
+        .rent-feedback .fb-question {
+            display: inline-block;
+            font-size: 30px;
+            color: #FF9F43;
+            margin-left: 12px;
+            vertical-align: middle;
+        }
+        .rent-feedback .fb-again {
+            display: inline-block;
+            font-size: 34px;
+            letter-spacing: 10px;
+            color: #9A8C98;
+            animation: popIn 0.4s ease;
+        }
+
+        /* 撒花特效 */
+        #confetti-container {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 997;
+            overflow: hidden;
+        }
+        .confetti-emoji {
+            position: absolute;
+            top: -60px;
+            animation: fallDown 3s linear forwards;
+        }
+        @keyframes fallDown {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(115vh) rotate(360deg); opacity: 0; }
+        }
+
         /* 關卡卡片 */
         .level-card {
             background: #fff;
@@ -416,6 +498,7 @@
 <body>
 
 <div id="balloon-container"></div>
+<div id="confetti-container"></div>
 
 <div class="container">
     <h1>🥤 描述與比較說明</h1>
@@ -543,48 +626,6 @@
                 <div class="dropdown-menu"></div>
             </div>平方呎,比較狹窄,空間未必足夠。<br><br>
             
-            租金方面,以金額來看,沙田舖租金
-            <div class="blank-container" id="q14">
-                <button class="blank-btn" onclick="toggleDropdown('q14')">【請選擇】</button>
-                <div class="dropdown-menu"></div>
-            </div>,每月要
-            <div class="blank-container" id="q15">
-                <button class="blank-btn" onclick="toggleDropdown('q15')">【請選擇】</button>
-                <div class="dropdown-menu"></div>
-            </div>元;其次是旺角舖,每月
-            <div class="blank-container" id="q16">
-                <button class="blank-btn" onclick="toggleDropdown('q16')">【請選擇】</button>
-                <div class="dropdown-menu"></div>
-            </div>元;最低的是荃灣舖,每月租金只要
-            <div class="blank-container" id="q17">
-                <button class="blank-btn" onclick="toggleDropdown('q17')">【請選擇】</button>
-                <div class="dropdown-menu"></div>
-            </div>。但是以呎租來算,旺角舖
-            <div class="blank-container" id="q18">
-                <button class="blank-btn" onclick="toggleDropdown('q18')">【請選擇】</button>
-                <div class="dropdown-menu"></div>
-            </div>,呎租要
-            <div class="blank-container" id="q19">
-                <button class="blank-btn" onclick="toggleDropdown('q19')">【請選擇】</button>
-                <div class="dropdown-menu"></div>
-            </div>元,沙田舖就
-            <div class="blank-container" id="q20">
-                <button class="blank-btn" onclick="toggleDropdown('q20')">【請選擇】</button>
-                <div class="dropdown-menu"></div>
-            </div>,每呎
-            <div class="blank-container" id="q21">
-                <button class="blank-btn" onclick="toggleDropdown('q21')">【請選擇】</button>
-                <div class="dropdown-menu"></div>
-            </div>元,荃灣舖呎租
-            <div class="blank-container" id="q22">
-                <button class="blank-btn" onclick="toggleDropdown('q22')">【請選擇】</button>
-                <div class="dropdown-menu"></div>
-            </div>元,比沙田
-            <div class="blank-container" id="q23">
-                <button class="blank-btn" onclick="toggleDropdown('q23')">【請選擇】</button>
-                <div class="dropdown-menu"></div>
-            </div>。<br><br>
-            
             人流方面,旺角的人流主要是
             <div class="blank-container" id="q24">
                 <button class="blank-btn" onclick="toggleDropdown('q24')">【請選擇】</button>
@@ -597,7 +638,15 @@
             <div class="blank-container" id="q26">
                 <button class="blank-btn" onclick="toggleDropdown('q26')">【請選擇】</button>
                 <div class="dropdown-menu"></div>
-            </div>為主。
+            </div>為主。<br><br>
+
+            租金方面,最貴的是
+            <span class="rent-choice-group">
+                <button class="rent-btn" onclick="handleRentChoice('mk', this)">1. 旺角</button>
+                <button class="rent-btn" onclick="handleRentChoice('st', this)">2. 沙田市中心</button>
+                <button class="rent-btn" onclick="handleRentChoice('tw', this)">3. 荃灣市中心</button>
+            </span>
+            <div class="rent-feedback" id="rent-feedback"></div>
         </div>
     </div>
 </div>
@@ -632,17 +681,6 @@
         q12: { answer: "最小", options: ["最小", "最大", "適中"] },
         q13: { answer: "100", options: ["100", "150", "200"] },
         
-        q14: { answer: "最高", options: ["最高", "最低", "居中"] },
-        q15: { answer: "三萬五千", options: ["三萬五千", "三萬", "兩萬八千"] },
-        q16: { answer: "三萬", options: ["三萬", "三萬五千", "兩萬八千"] },
-        q17: { answer: "兩萬八千元", options: ["兩萬八千元", "三萬五千元", "三萬元"] },
-        q18: { answer: "最貴", options: ["最貴", "最便宜", "略高"] },
-        q19: { answer: "300", options: ["300", "175", "187"] },
-        q20: { answer: "最便宜", options: ["最便宜", "最貴", "略高"] },
-        q21: { answer: "175", options: ["175", "300", "187"] },
-        q22: { answer: "187", options: ["187", "300", "175"] },
-        q23: { answer: "略高", options: ["略高", "略低", "一樣"] },
-        
         q24: { answer: "年輕人", options: ["年輕人", "居民", "上班族"] },
         q25: { answer: "年輕人及附近的居民", options: ["年輕人及附近的居民", "居民及上班族", "純上班族"] },
         q26: { answer: "居民及上班族", options: ["居民及上班族", "年輕人及附近的居民", "純遊客群"] }
@@ -650,10 +688,12 @@
 
     let score = 0;
     let answeredCorrectly = {};
+    let rentAnswered = false;
 
     function initGame() {
         score = 0;
         answeredCorrectly = {};
+        rentAnswered = false;
         document.getElementById('score-text').innerText = score;
         document.getElementById('level2-card').classList.add('locked');
         document.getElementById('l2-lock-mask').style.display = 'flex';
@@ -661,6 +701,10 @@
         document.getElementById('success-modal').style.display = 'none';
         document.getElementById('balloon-container').style.display = 'none';
         document.getElementById('balloon-container').innerHTML = '';
+        document.getElementById('rent-feedback').innerHTML = '';
+        document.getElementById('confetti-container').innerHTML = '';
+        document.querySelectorAll('.rent-btn').forEach(b => b.classList.remove('active'));
+        rentAnswered = false;
 
         for (let qId in questionsConfig) {
             const container = document.getElementById(qId);
@@ -729,7 +773,7 @@
         }
 
         const allFinished = Object.keys(questionsConfig).every(id => answeredCorrectly[id]);
-        if (allFinished) {
+        if (allFinished && rentAnswered) {
             triggerWinCelebration();
         }
     }
@@ -744,6 +788,44 @@
             behavior: "smooth",
             block: "start"
         });
+    }
+
+    // 租金三選一：不同選擇顯示不同回應
+    function handleRentChoice(choice, btn) {
+        const feedback = document.getElementById('rent-feedback');
+        document.querySelectorAll('.rent-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        rentAnswered = true;
+
+        if (choice === 'mk') {
+            // 旺角：熱烈撒花
+            feedback.innerHTML = '<span class="fb-confetti">🎉🎊💐✨🎉🎊🎉</span>';
+            spawnConfetti();
+        } else if (choice === 'st') {
+            // 沙田市中心：大問號 + 真的嗎
+            feedback.innerHTML = '<span class="fb-qmark">❓</span><span class="fb-question">真的嗎？</span>';
+        } else {
+            // 荃灣市中心：再想想
+            feedback.innerHTML = '<span class="fb-again">再 想 想</span>';
+        }
+
+        checkProgress();
+    }
+
+    function spawnConfetti() {
+        const container = document.getElementById('confetti-container');
+        const emojis = ['🎉', '🎊', '💐', '✨', '🌸', '🎇', '🥳'];
+
+        for (let i = 0; i < 36; i++) {
+            const span = document.createElement('span');
+            span.className = 'confetti-emoji';
+            span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            span.style.left = Math.random() * 96 + 'vw';
+            span.style.fontSize = (22 + Math.random() * 22) + 'px';
+            span.style.animationDelay = (Math.random() * 1.8) + 's';
+            container.appendChild(span);
+            setTimeout(() => span.remove(), 5200);
+        }
     }
 
     function triggerWinCelebration() {
