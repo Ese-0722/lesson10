@@ -166,6 +166,21 @@
             border: 2px solid #FF5C8A;
             box-shadow: 0 3px 10px rgba(255, 117, 143, 0.25);
         }
+        .rent-btn.wrong {
+            background: #FFE3E3;
+            border: 2px dashed #FFB5B5;
+            color: var(--danger-color);
+            text-decoration: line-through;
+            opacity: 0.75;
+        }
+        .rent-btn:disabled {
+            cursor: default;
+        }
+        .rent-btn.correct {
+            background: #E8F5E9;
+            border: 2px solid var(--success-color);
+            color: var(--success-color);
+        }
 
         .rent-feedback {
             margin-top: 12px;
@@ -688,12 +703,12 @@
 
     let score = 0;
     let answeredCorrectly = {};
-    let rentAnswered = false;
+    let rentCorrect = false;
 
     function initGame() {
         score = 0;
         answeredCorrectly = {};
-        rentAnswered = false;
+        rentCorrect = false;
         document.getElementById('score-text').innerText = score;
         document.getElementById('level2-card').classList.add('locked');
         document.getElementById('l2-lock-mask').style.display = 'flex';
@@ -703,8 +718,12 @@
         document.getElementById('balloon-container').innerHTML = '';
         document.getElementById('rent-feedback').innerHTML = '';
         document.getElementById('confetti-container').innerHTML = '';
-        document.querySelectorAll('.rent-btn').forEach(b => b.classList.remove('active'));
-        rentAnswered = false;
+        document.querySelectorAll('.rent-btn').forEach(b => {
+            b.classList.remove('active');
+            b.classList.remove('wrong');
+            b.classList.remove('correct');
+            b.disabled = false;
+        });
 
         for (let qId in questionsConfig) {
             const container = document.getElementById(qId);
@@ -773,7 +792,7 @@
         }
 
         const allFinished = Object.keys(questionsConfig).every(id => answeredCorrectly[id]);
-        if (allFinished && rentAnswered) {
+        if (allFinished && rentCorrect) {
             triggerWinCelebration();
         }
     }
@@ -790,25 +809,41 @@
         });
     }
 
-    // 租金三選一：不同選擇顯示不同回應
+    // 租金三選一：只有「旺角」正確，答對才能通關
     function handleRentChoice(choice, btn) {
+        if (rentCorrect) return; // 已答對，選項鎖定
+
         const feedback = document.getElementById('rent-feedback');
         document.querySelectorAll('.rent-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        rentAnswered = true;
 
         if (choice === 'mk') {
-            // 旺角：熱烈撒花
+            // 旺角：正確 → 熱烈撒花
+            rentCorrect = true;
+            score += 2;
+            btn.classList.add('correct');
             feedback.innerHTML = '<span class="fb-confetti">🎉🎊💐✨🎉🎊🎉</span>';
             spawnConfetti();
-        } else if (choice === 'st') {
-            // 沙田市中心：大問號 + 真的嗎
-            feedback.innerHTML = '<span class="fb-qmark">❓</span><span class="fb-question">真的嗎？</span>';
+            document.querySelectorAll('.rent-btn').forEach(b => {
+                b.disabled = true;
+                b.classList.remove('wrong');
+            });
         } else {
-            // 荃灣市中心：再想想
-            feedback.innerHTML = '<span class="fb-again">再 想 想</span>';
+            // 答錯：同一選項只扣一次分
+            if (!btn.classList.contains('wrong')) {
+                score -= 1;
+                btn.classList.add('wrong');
+            }
+            if (choice === 'st') {
+                // 沙田市中心：大問號 + 真的嗎
+                feedback.innerHTML = '<span class="fb-qmark">❓</span><span class="fb-question">真的嗎？</span>';
+            } else {
+                // 荃灣市中心：再想想
+                feedback.innerHTML = '<span class="fb-again">再 想 想</span>';
+            }
         }
 
+        document.getElementById('score-text').innerText = score;
         checkProgress();
     }
 
