@@ -98,7 +98,7 @@
             border-radius: 6px;
         }
 
-        /* 資料表格樣式 - 加入 Sticky 固定效果 */
+        /* 資料表格樣式 */
         .table-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -107,9 +107,6 @@
             padding: 15px 20px;
             margin-bottom: 30px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 15px;
-            z-index: 50;
         }
         .table-card h3 {
             margin-top: 0;
@@ -433,7 +430,7 @@
         <strong>情景：</strong>你和朋友在進行問卷調查後，決定開一家<span class="highlight-text">外賣台式飲品店</span>。你找了三個適合開店地點，請嘗試向朋友描述不同地點的資料並進行比較。
     </div>
 
-    <!-- 參考資料卡片 (現在會固定在頂部) -->
+    <!-- 參考資料卡片 -->
     <div class="table-card">
         <h3>📊 開店地點資料參考表</h3>
         <table>
@@ -742,15 +739,10 @@
         document.getElementById('l2-lock-mask').style.display = 'none';
         document.getElementById('l1-next-btn').style.display = 'none';
         
-        // 修改捲動行為，預留給固定資料表的空間
-        const targetElement = document.getElementById('level2-card');
-        const offset = 250; // 資料表大約佔據的高度
-        const elementPosition = targetElement.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - offset;
-        
-        window.scrollTo({
-             top: offsetPosition,
-             behavior: "smooth"
+        // 捲動至第二關
+        document.getElementById('level2-card').scrollIntoView({
+            behavior: "smooth",
+            block: "start"
         });
     }
 
